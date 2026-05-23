@@ -17,7 +17,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-slate-50">
         <Header />
         <div className="flex items-center justify-center h-96">
-          <div className="text-slate-400 text-lg">Loading dashboard...</div>
+          <div className="text-slate-400 text-lg">Loading traffic data...</div>
         </div>
       </div>
     );
@@ -51,7 +51,11 @@ export default function Dashboard() {
               <h2 className="text-lg font-medium text-slate-900">Traffic by Country</h2>
               <ChartToggle active={countryChartType} onChange={setCountryChartType} />
             </div>
-            <CountryTrafficChart data={countryData} chartType={countryChartType} />
+                        <CountryTrafficChart
+              key={`country-${countryData.length}-${records.length}`}
+              data={countryData}
+              chartType={countryChartType}
+            />
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -59,7 +63,11 @@ export default function Dashboard() {
               <h2 className="text-lg font-medium text-slate-900">Vehicle Distribution</h2>
               <ChartToggle active={vehicleChartType} onChange={setVehicleChartType} />
             </div>
-            <VehicleDistributionChart data={vehicleData} chartType={vehicleChartType} />
+                        <VehicleDistributionChart
+              key={`vehicle-${vehicleData.length}-${records.length}`}
+              data={vehicleData}
+              chartType={vehicleChartType}
+            />
           </div>
         </div>
 
