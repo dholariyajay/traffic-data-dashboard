@@ -5,13 +5,17 @@ import VehicleDistributionChart from './charts/VehicleDistributionChart';
 import ChartCard from './ChartCard';
 import DataManager from './DataManager';
 import DashboardSkeleton from './ui/DashboardSkeleton';
+import ToastStack from './ui/Toast';
 import { StatsOverview } from './StatsOverview';
 import { useTrafficData } from '../hooks/useTrafficData';
+import { useToast } from '../hooks/useToast';
 import { vehicleLabels } from '../constants/theme';
 import type { ChartType } from '../types/traffic';
 
 export default function Dashboard() {
-  const { countryData, vehicleData, records, countries, loading, error, refetch } = useTrafficData();
+  const { countryData, vehicleData, records, countries, loading, isRefreshing, error, refetch } =
+    useTrafficData();
+  const { toasts, push, dismiss } = useToast();
   const [countryChartType, setCountryChartType] = useState<ChartType>('bar');
   const [vehicleChartType, setVehicleChartType] = useState<ChartType>('pie');
 
@@ -43,7 +47,7 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-100 via-slate-50 to-white">
-        <Header />
+        <Header onRefresh={refetch} isRefreshing={isRefreshing} />
         <main className="mx-auto flex max-w-lg flex-col items-center px-4 py-24 text-center sm:px-6">
           <div className="rounded-2xl border border-red-100 bg-white p-8 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-wide text-red-500">Something went wrong</p>
@@ -63,7 +67,11 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-100 via-slate-50 to-white">
-      <Header recordCount={records.length} />
+      <Header
+        recordCount={records.length}
+        onRefresh={refetch}
+        isRefreshing={isRefreshing}
+      />
 
       <main className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
         <StatsOverview
@@ -104,8 +112,15 @@ export default function Dashboard() {
           </ChartCard>
         </section>
 
-        <DataManager records={records} countries={countries} onDataChange={refetch} />
+        <DataManager
+          records={records}
+          countries={countries}
+          onDataChange={refetch}
+          onNotify={push}
+        />
       </main>
+
+      <ToastStack toasts={toasts} onDismiss={dismiss} />
     </div>
   );
 }
